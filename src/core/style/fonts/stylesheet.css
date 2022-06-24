@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'embedded_opentype_900';
+    src: url('./fontbold.eot');
+    src: url('./fontbold.eot?#iefix') format('embedded-opentype'),
+    url('./fontbold.woff2') format('woff2'),
+    url('./fontbold.woff') format('woff'),
+    url('./fontbold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'embedded_opentype_500';
+    src: url('./font500.eot');
+    src: url('./font500.eot?#iefix') format('embedded-opentype'),
+    url('./font500.woff2') format('woff2'),
+    url('./font500.woff') format('woff'),
+    url('./font500.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

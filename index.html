@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Checkmate</title>
+    <style>
+        .bundle-loader_32717541 {
+            display: inline-block;
+            position: fixed;
+            top: calc(50vh - 40px);
+            left: calc(50vw - 40px);
+            width: 80px;
+            height: 80px;
+        }
+
+        .bundle-loader_32717541 div {
+            position: absolute;
+            border: 4px solid rgb(0, 188, 212);
+            opacity: 1;
+            border-radius: 50%;
+            animation: bundle-loader_32717541 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+
+        .bundle-loader_32717541 div:nth-child(2) {
+            animation-delay: -0.5s;
+        }
+
+        @keyframes bundle-loader_32717541 {
+            0% {
+                top: 36px;
+                left: 36px;
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            4.9% {
+                top: 36px;
+                left: 36px;
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            5% {
+                top: 36px;
+                left: 36px;
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                top: 0px;
+                left: 0px;
+                width: 72px;
+                height: 72px;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="root">
+    <div class="bundle-loader_32717541">
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
+<script type="module" src="/src/index.jsx"></script>
+</body>
+</html>

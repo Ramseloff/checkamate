@@ -1,0 +1,22 @@
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.black {
+    background: blue;
+}
+
+.white {
+    background: white;
+}
+
+.active {
+    border: 5px solid #00C800;
+}
+
+.piece {
+    height: 45px;
+    width: 45px;
+}
