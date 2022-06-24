@@ -15,14 +15,20 @@ function getPieceName(coordinate, pieces = []) {
     return pieces.find((i) => (i.x === x && i.y === y))?.img;
 }
 
-function getChildPieces(pieces, coordinate) {
-    const pieceName = getPieceName(coordinate, pieces)
+function getChildPieces(pieceName) {
     if (pieceName) return <img className='piece' src={'src/images/pieces/' + pieceName} alt=''/>
 }
 
 
 const FieldCell = ({ pieces =[], coordinate = {}, activeCell = {}, onClick = f => f }) => {
-    const childPieces = getChildPieces(pieces, coordinate);
+    const pieceName = getPieceName(coordinate, pieces);
+    const childPieces = getChildPieces(pieceName);
+
+
+    // function onCheckCell() {
+    //
+    // }
+
 
     const classes = ['cell'];
     classes.push(getColor(coordinate));

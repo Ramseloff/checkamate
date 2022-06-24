@@ -51,18 +51,35 @@ const defaultPieces = [
     { name: 'dP6', x: 2, y: 6, img: 'dP.svg' },
     { name: 'dP7', x: 2, y: 7, img: 'dP.svg' },
     { name: 'dP8', x: 2, y: 8, img: 'dP.svg' },
-]
+];
+
+function addActive() {
+
+}
 
 
 const Field = () => {
-    const [activeCell, setActiveCell] = useState('')
+    const [activeCell, setActiveCell] = useState({})
+    const [activeAddCell, setAddActiveCell] = useState({})
+
     const [pieces, setPieces] = useState(defaultPieces);
 
-    function onClick(active = '') {
-        const coordinate = active.split('_');
-        const coordinateActive = { x: Number(coordinate[0]), y: Number(coordinate[1]) }
-        console.log(coordinateActive);
-        setActiveCell(coordinateActive);
+    function onClick(cellCoordinate) {
+        // const coordinate = active.split('_');
+        // const coordinateActive = { x: cellCoordinate.x, y: Number(coordinate[1]) }
+
+
+        setActiveCell(cellCoordinate);
+
+    }
+
+    function onCheckCell(cellCoordinate) {
+       const pieceName = pieces.find((i) => (i.x === cellCoordinate.x && i.y === cellCoordinate.y))?.name;
+
+
+        console.log(pieceName);
+
+        if (pieceName) onClick(cellCoordinate);
     }
 
 
@@ -79,7 +96,7 @@ const Field = () => {
                                     pieces={pieces}
                                     activeCell={activeCell}
                                     coordinate={cellCoordinate}
-                                    onClick={() => onClick((idx + 1) + '_' + (idy + 1))}
+                                    onClick={() => onCheckCell(cellCoordinate)}
                                 />
                             )
                         })
