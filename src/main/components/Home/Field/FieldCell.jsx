@@ -12,12 +12,12 @@ function checkActive(coordinate, activeCell) {
 
 function getPieceName(coordinate, pieces = []) {
     const { x, y } = coordinate;
-    return pieces.find((i) => (i.x === x && i.y === y))?.name;
+    return pieces.find((i) => (i.x === x && i.y === y))?.img;
 }
 
 function getChildPieces(pieces, coordinate) {
     const pieceName = getPieceName(coordinate, pieces)
-    if (pieceName) return <img className='piece' src={'src/images/pieces/' + pieceName + '.svg'} alt=''/>
+    if (pieceName) return <img className='piece' src={'src/images/pieces/' + pieceName} alt=''/>
 }
 
 
