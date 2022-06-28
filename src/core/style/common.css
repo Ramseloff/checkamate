@@ -16,6 +16,10 @@
     border: 5px solid #00C800;
 }
 
+.move {
+    border: 5px solid #C800C8;
+}
+
 .piece {
     height: 45px;
     width: 45px;
