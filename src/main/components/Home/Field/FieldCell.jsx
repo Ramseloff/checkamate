@@ -1,4 +1,5 @@
 import React from 'react';
+import Piece from './Piece';
 
 function getColor(coordinate) {
     const { x, y } = coordinate;
@@ -10,19 +11,13 @@ function checkActive(coordinate, activeCell) {
     return (coordinate.x === activeCell.x && coordinate.y === activeCell.y) ? 'active' : ''
 }
 
-function getPieceName(coordinate, pieces = []) {
-    const { x, y } = coordinate;
-    return pieces.find((i) => (i.x === x && i.y === y))?.img;
-}
-
-function getChildPieces(pieceName) {
-    if (pieceName) return <img className='piece' src={'src/images/pieces/' + pieceName} alt=''/>
+function checkMove(coordinate, moveCell) {
+    return moveCell.find(i => i.x === coordinate.x && i.y === coordinate.y) ? 'move' : ''
 }
 
 
-const FieldCell = ({ pieces =[], coordinate = {}, activeCell = {}, onClick = f => f }) => {
-    const pieceName = getPieceName(coordinate, pieces);
-    const childPieces = getChildPieces(pieceName);
+
+const FieldCell = ({ piece = {}, coordinate = {}, activeCell = {}, moveCell= [], onClick = f => f }) => {
 
 
     // function onCheckCell() {
@@ -33,10 +28,16 @@ const FieldCell = ({ pieces =[], coordinate = {}, activeCell = {}, onClick = f =
     const classes = ['cell'];
     classes.push(getColor(coordinate));
     classes.push(checkActive(coordinate, activeCell));
+    classes.push(checkMove(coordinate, moveCell));
 
     return (
         <>
-            <div className={classes.join(' ')} onClick={onClick}>{childPieces}</div>
+            <div className={classes.join(' ')} onClick={onClick}>
+                <Piece
+                    coordinate={coordinate}
+                    piece={piece}
+                />
+            </div>
         </>
     );
 };

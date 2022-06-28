@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import Field from './Field/Fileld';
+import Field from './Field/Field';
 
 const Home = () => {
     console.log('test');
