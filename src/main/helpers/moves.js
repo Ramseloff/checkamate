@@ -2,12 +2,18 @@ import { checkDiagonal } from './diagonalMoves';
 import { checkLine } from './lineMoves';
 import { pawnAttack, pawnMove } from './pawn';
 
-function checkKingMove(x, y, color, arrayMoves = [], pieces = {}) {
+function checkKingMove(
+    x = 0,
+    y = 0,
+    color = '',
+    arrayMoves = [],
+    pieces = {}
+) {
     const piecesWithoutKing = pieces.map((item) => {
         return item.x === x && item.y === y ? {} : item;
     });
 
-    const checkedMoves = arrayMoves.filter((item) => {
+    return arrayMoves.filter((item) => {
         let permission = true;
         const { x, y } = item
         const arrayEnemyLineMoves = [];
@@ -43,9 +49,7 @@ function checkKingMove(x, y, color, arrayMoves = [], pieces = {}) {
         }
 
         return permission;
-    })
-
-    return checkedMoves;
+    });
 }
 
 
