@@ -3,8 +3,8 @@ import Piece from './Piece';
 
 function getColor(coordinate) {
     const { x, y } = coordinate;
-    if ( x % 2 !== 0 && y % 2 !== 0 || x % 2 === 0 && y % 2 === 0 ) return 'white';
-    if ( x % 2 !== 0 && y % 2 === 0 || x % 2 === 0 && y % 2 !== 0 ) return 'black';
+    if (x % 2 !== 0 && y % 2 !== 0 || x % 2 === 0 && y % 2 === 0) return 'white';
+    if (x % 2 !== 0 && y % 2 === 0 || x % 2 === 0 && y % 2 !== 0) return 'black';
 }
 
 function checkActive(coordinate, activeCell) {
@@ -16,15 +16,13 @@ function checkMove(coordinate, moveCell) {
 }
 
 
-
-const FieldCell = ({ piece = {}, coordinate = {}, activeCell = {}, moveCell= [], onClick = f => f }) => {
-
-
-    // function onCheckCell() {
-    //
-    // }
-
-
+const FieldCell = ({
+                       piece = {},
+                       coordinate = {},
+                       activeCell = {},
+                       moveCell = [],
+                       onClick = f => f
+}) => {
     const classes = ['cell'];
     classes.push(getColor(coordinate));
     classes.push(checkActive(coordinate, activeCell));
