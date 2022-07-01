@@ -14,10 +14,10 @@ const fieldGrid = (size) => css({
 
 
 const Field = () => {
+    const [pieces, setPieces] = useState(field);
     const [activeCell, setActiveCell] = useState({})
     const [moveCell, setMoveCell] = useState([]);
 
-    const [pieces, setPieces] = useState(field);
 
     const moveRules = {
         pawn: pawnMoves,
