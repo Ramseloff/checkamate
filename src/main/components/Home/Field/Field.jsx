@@ -28,9 +28,11 @@ const field = [
     { x: 3, y: 7, name: 'g6', piece: {} }, { x: 3, y: 8, name: 'h6', piece: {} },
 
     { x: 4, y: 1, name: 'a5', piece: {} }, { x: 4, y: 2, name: 'b5', piece: {} },
-    { x: 4, y: 3, name: 'c5', piece: {} }, { x: 4, y: 4, name: 'd5', piece: {} },
+    { x: 4, y: 3, name: 'c5', piece: { type: 'rook', color: 'white', name: 'whiteRook', img: 'whiteRook.svg' } },
+    { x: 4, y: 4, name: 'd5', piece: {} },
     { x: 4, y: 5, name: 'e5', piece: {} }, { x: 4, y: 6, name: 'f5', piece: {} },
-    { x: 4, y: 7, name: 'g5', piece: {} }, { x: 4, y: 8, name: 'h5', piece: {} },
+    { x: 4, y: 7, name: 'g5', piece: { type: 'rook', color: 'white', name: 'whiteRook', img: 'whiteRook.svg' } },
+    { x: 4, y: 8, name: 'h5', piece: { type: 'rook', color: 'white', name: 'whiteRook', img: 'whiteRook.svg' } },
 
     { x: 5, y: 1, name: 'a4', piece: {} }, { x: 5, y: 2, name: 'b4', piece: {} },
     { x: 5, y: 3, name: 'c4', piece: {} }, { x: 5, y: 4, name: 'd4', piece: {} },
@@ -144,73 +146,260 @@ const queenMoves = () => {
 }
 
 
-
-
 const Field = () => {
     const [activeCell, setActiveCell] = useState({})
     const [activeAddCell, setAddActiveCell] = useState({})
     const [moveCell, setMoveCell] = useState([]);
+    const [allowedMovePawn, setAllowedMovePawn] = useState({ white: true, black: true });
 
-    const [pieces, setPieces] = useState(defaultPieces);
+    const [pieces, setPieces] = useState(field);
 
-    const moveRules = {
-        pawn: {
-            white: [
-                { x: -1, y: 0 }, { x: -2, y: 0 },
-                { x: -1, y: -1 }, { x: -1, y: 1 },
-            ],
-            black: [
-                { x: 1, y: 0 }, { x: 2, y: 0 },
-                { x: 1, y: -1 }, { x: 1, y: 1 },
-            ],
-        },
-        knight: [
-            { x: -2, y: -1 }, { x: -2, y: 1 },
-            { x: 2, y: -1 }, { x: 2, y: 1 },
-            { x: -1, y: -2 }, { x: -1, y: 2 },
-            { x: 1, y: -2 }, { x: 1, y: 2 },
-        ],
-        bishop: bishopMoves(),
-        rook: rookMoves(),
-        queen: queenMoves(),
-        king: [
-            { x: 1, y: 1 }, { x: 1, y: -1 },
-            { x: -1, y: 1 }, { x: -1, y: -1 },
-            { x: 0, y: 1 }, { x: 0, y: -1 },
-            { x: 1, y: 0 }, { x: -1, y: 0 },
-        ],
-    }
+    function checkLinePlus(primary, primaryValue, secondary, secondaryValue, color, max) {
+        const arrayMoves = [];
 
-    const moveRulesTest = {
-        knight: () => {
-
+        for (let i = 1; i < max; i++) {
+            if (pieces.some((item) => (
+                item[primary] === primaryValue + i && item[secondary] === secondaryValue && item.piece.color === color || primaryValue + i > 8
+            ))) break;
+            arrayMoves.push({ [primary]: primaryValue + i, [secondary]: secondaryValue })
+            if (pieces.some((item) => (
+                item[primary] === primaryValue + i && item[secondary] === secondaryValue && item.piece.hasOwnProperty('name')
+            ))) break;
         }
 
+        return arrayMoves;
+    }
+
+    function checkDiagonalRightUp(x, y, color, max) {
+        const arrayMoves = [];
+
+        for (let i = 1; i < max; i++) {
+            if (pieces.some((item) => (
+                item.x === x - i && item.y === y + i && item.piece.color === color || x - i < 1 || y + i > 8
+            ))) break;
+            arrayMoves.push({ x: x - i, y: y + i })
+            if (pieces.some((item) => (
+                item.x === x - i && item.y === y + i && item.piece.hasOwnProperty('name')
+            ))) break;
+        }
+
+        return arrayMoves;
+    }
+
+    function checkDiagonalRightDown(x, y, color, max) {
+        const arrayMoves = [];
+
+        for (let i = 1; i < max; i++) {
+            if (pieces.some((item) => (
+                item.x === x + i && item.y === y + i && item.piece.color === color || x + i > 8 || y + i > 8
+            ))) break;
+            arrayMoves.push({ x: x + i, y: y + i })
+            if (pieces.some((item) => (
+                item.x === x + i && item.y === y + i && item.piece.hasOwnProperty('name')
+            ))) break;
+        }
+
+        return arrayMoves;
+    }
+
+    function checkDiagonalLeftDown(x, y, color, max) {
+        const arrayMoves = [];
+
+        for (let i = 1; i < max; i++) {
+            if (pieces.some((item) => (
+                item.x === x + i && item.y === y - i && item.piece.color === color || x + i > 8 || y - i < 1
+            ))) break;
+            arrayMoves.push({ x: x + i, y: y - i })
+            if (pieces.some((item) => (
+                item.x === x + i && item.y === y - i && item.piece.hasOwnProperty('name')
+            ))) break;
+        }
+
+        return arrayMoves;
+    }
+
+    function checkDiagonalLeftUp(x, y, color, max) {
+        const arrayMoves = [];
+
+        for (let i = 1; i < max; i++) {
+            if (pieces.some((item) => (
+                item.x === x - i && item.y === y - i && item.piece.color === color || x - i < 1 || y - i < 1
+            ))) break;
+            arrayMoves.push({ x: x - i, y: y - i })
+            if (pieces.some((item) => (
+                item.x === x - i && item.y === y - i && item.piece.hasOwnProperty('name')
+            ))) break;
+        }
+
+        return arrayMoves;
+    }
+
+    function checkLineMinus(primary, primaryValue, secondary, secondaryValue, color, max) {
+        const arrayMoves = [];
+
+        for (let i = 1; i < max; i++) {
+            if (pieces.some((item) => (
+                item[primary] === primaryValue - i && item[secondary] === secondaryValue && item.piece.color === color || primaryValue - i < 1
+            ))) break;
+            arrayMoves.push({ [primary]: primaryValue - i, [secondary]: secondaryValue })
+            if (pieces.some((item) => (
+                item[primary] === primaryValue - i && item[secondary] === secondaryValue && item.piece.hasOwnProperty('name')
+            ))) break;
+        }
+
+        return arrayMoves;
     }
 
 
-    function onClick(piece, idx) {
 
-        setActiveCell({ piece, idx });
+
+
+    const rookMovesTest = (piece, x, y) => {
+        const { color } = piece;
+        const arrayMoves = [];
+
+        arrayMoves.push(...checkLinePlus('x', x, 'y', y, color, 8));
+        arrayMoves.push(...checkLinePlus('y', y, 'x', x, color, 8));
+        arrayMoves.push(...checkLineMinus('x', x, 'y', y, color, 8));
+        arrayMoves.push(...checkLineMinus('y', y, 'x', x, color, 8));
+
+
+        console.log(arrayMoves, 'out');
+        return arrayMoves;
     }
 
-    function getMoveCell(piece, x, y) {
-        const { type, color } = piece
-        const newMove = (type === 'pawn')
-            ? moveRules[type][color].map(i => ({ x: x + i.x, y: y + i.y }))
-            : moveRules[type].map(i => ({ x: x + i.x, y: y + i.y }));
+    const knightMovesTest = (piece, x, y) => {
+        const { color } = piece;
+        const arrayMoves = [
+            { x: x - 2, y: y - 1 }, { x: x - 2, y: y + 1 },
+            { x: x + 2, y: y - 1 }, { x: x + 2, y: y + 1 },
+            { x: x - 1, y: y - 2 }, { x: x - 1, y: y + 2 },
+            { x: x + 1, y: y - 2 }, { x: x + 1, y: y + 2 },
+        ];
 
-        const checkedMove = newMove.filter((i) => field.some(
+        return arrayMoves.filter((i) => pieces.some(
             (item) => (item.x === i.x && item.y === i.y && (
                 !item.piece.hasOwnProperty('name') || color !== item.piece.color
             )),
         ));
-
-
-        console.log(checkedMove);
-        setMoveCell(checkedMove);
     }
 
+    function checkPawnMove(piece, x, y, color) {
+        const arrayMoves = [];
+        const max = {
+            white: x === 7 ? 3 : 2,
+            black: x === 2 ? 3 : 2,
+        }
+        const sign = {
+            white: -1,
+            black: 1,
+        }
+
+        for (let i = 1; i < max[color]; i++) {
+            if (pieces.some((item) => (
+                item.x === x + (i * sign[color])  && item.y === y  && item.piece.hasOwnProperty('name')
+            ))) break;
+            arrayMoves.push({ x: x + (i * sign[color]), y: y })
+        }
+
+        return arrayMoves;
+    }
+
+    function checkPawnAttack(piece, x, y, color) {
+        const arrayMoves = [];
+        const sign = {
+            white: -1,
+            black: 1,
+        }
+        const attack = {
+            1: -1,
+            2: 1,
+        };
+
+        for (let i = 1; i < 3; i++) {
+            console.log(x + (i * sign[color]), y + attack[i]);
+            if (pieces.some((item) => (
+                item.x === x + sign[color] && item.y === y + attack[i] && item.piece.hasOwnProperty('name') && color !== item.piece.color
+            ))) arrayMoves.push({ x: x + sign[color], y:  y + attack[i] })
+        }
+
+        return arrayMoves;
+    }
+
+    const pawnMovesTest = (piece, x, y) => {
+        const { color } = piece;
+        const arrayMoves = [];
+
+        arrayMoves.push(...checkPawnMove(piece, x, y, color));
+        arrayMoves.push(...checkPawnAttack(piece, x, y, color));
+
+        return arrayMoves;
+    }
+
+    const bishopMovesTest = (piece, x, y) => {
+        const { color } = piece;
+        const arrayMoves = [];
+
+        arrayMoves.push(...checkDiagonalRightUp(x, y, color, 8));
+        arrayMoves.push(...checkDiagonalRightDown(x, y, color, 8));
+        arrayMoves.push(...checkDiagonalLeftDown(x, y, color, 8));
+        arrayMoves.push(...checkDiagonalLeftUp(x, y, color, 8));
+
+        return arrayMoves;
+    }
+
+    const queenMovesTest = (piece, x, y) => {
+        const { color } = piece;
+        const arrayMoves = [];
+
+        arrayMoves.push(...checkLinePlus('x', x, 'y', y, color, 8));
+        arrayMoves.push(...checkLinePlus('y', y, 'x', x, color, 8));
+        arrayMoves.push(...checkLineMinus('x', x, 'y', y, color, 8));
+        arrayMoves.push(...checkLineMinus('y', y, 'x', x, color, 8));
+        arrayMoves.push(...checkDiagonalRightUp(x, y, color, 8));
+        arrayMoves.push(...checkDiagonalRightDown(x, y, color, 8));
+        arrayMoves.push(...checkDiagonalLeftDown(x, y, color, 8));
+        arrayMoves.push(...checkDiagonalLeftUp(x, y, color, 8));
+
+        return arrayMoves;
+    }
+
+    const kingMovesTest = (piece, x, y) => {
+        const { color } = piece;
+        const arrayMoves = [];
+
+        arrayMoves.push(...checkLinePlus('x', x, 'y', y, color, 2));
+        arrayMoves.push(...checkLinePlus('y', y, 'x', x, color, 2));
+        arrayMoves.push(...checkLineMinus('x', x, 'y', y, color, 2));
+        arrayMoves.push(...checkLineMinus('y', y, 'x', x, color, 2));
+        arrayMoves.push(...checkDiagonalRightUp(x, y, color, 2));
+        arrayMoves.push(...checkDiagonalRightDown(x, y, color, 2));
+        arrayMoves.push(...checkDiagonalLeftDown(x, y, color, 2));
+        arrayMoves.push(...checkDiagonalLeftUp(x, y, color, 2));
+
+        return arrayMoves;
+    }
+
+    const moveRulesTest = {
+        pawn: pawnMovesTest,
+        knight: knightMovesTest,
+        rook: rookMovesTest,
+        bishop: bishopMovesTest,
+        queen: queenMovesTest,
+        king: kingMovesTest,
+    }
+
+
+    function onClick(piece, idx) {
+        setActiveCell({ piece, idx });
+    }
+
+    function getMoveCell(piece, x, y) {
+        const { type } = piece;
+        const newMove = moveRulesTest[type](piece, x, y);
+
+        setMoveCell(newMove);
+    }
 
     function onClear() {
         setActiveCell({});
@@ -218,26 +407,24 @@ const Field = () => {
     }
 
     function onCheckCell(idx) {
-        const { x, y, piece } = field[idx];
+        const { x, y, piece } = pieces[idx];
 
-        if (piece.name) {
+        if (piece.name && (!activeCell?.piece?.name || !moveCell.length)) {
             getMoveCell(piece, x, y);
             onClick(piece, idx);
         } else if (moveCell.length) {
             const validMove = moveCell.some((i) => (i.x === x && i.y === y));
-
             if (validMove) {
-                const newField = field;
-                newField[activeCell.idx].piece = {};
-                newField[idx].piece = activeCell.piece;
-                setPieces(newField)
+                const newPieces = pieces;
+                newPieces[activeCell.idx].piece = {};
+                newPieces[idx].piece = activeCell.piece;
+                setPieces(newPieces);
             }
             onClear();
         }
     }
 
-
-    // console.log(moveCell, activeCell);
+    console.log(moveCell, activeCell);
     return (
         <>
             <div>
@@ -402,4 +589,47 @@ export default Field;
 //     blackPawn7: { type: 'pawn', color: 'black', position: '7', name: 'blackPawn', x: 2, y: 7, img: 'blackPawn.svg' },
 //     blackPawn8: { type: 'pawn', color: 'black', position: '8', name: 'blackPawn', x: 2, y: 8, img: 'blackPawn.svg' },
 //
+// }
+
+// console.log(checkLinePlus('x', x, 'y', y, color, 8));
+// console.log(checkLinePlus('y', y, 'x', x, color, 8));
+// console.log(checkLineMinus('x', x, 'y', y, color, 8));
+// console.log(checkLineMinus('y', y, 'x', x, color, 8));
+
+// for (let i = 1; i < 8; i++) {
+//     if (field.some((item) => (
+//         item.x === x + i && item.y === y && item.piece.color === color || x + i > 8
+//     ))) break;
+//     arrayMoves.push({ x: x + i, y: y })
+//     if (field.some((item) => (
+//         item.x === x + i && item.y === y && item.piece.hasOwnProperty('name')
+//     ))) break;
+// }
+// for (let i = 1; i < 8; i++) {
+//     if (field.some((item) => (
+//         item.x === x - i && item.y === y && item.piece.color === color || x - i < 1
+//     ))) break;
+//     arrayMoves.push({ x: x - i, y: y })
+//     if (field.some((item) => (
+//         item.x === x - i && item.y === y && item.piece.hasOwnProperty('name')
+//     ))) break;
+// }
+//
+// for (let i = 1; i < 8; i++) {
+//     if (field.some((item) => (
+//         item.x === x && item.y === y + i && item.piece.color === color || y + i > 8
+//     ))) break;
+//     arrayMoves.push({ x: x, y: y + i })
+//     if (field.some((item) => (
+//         item.x === x && item.y === y + i && item.piece.hasOwnProperty('name')
+//     ))) break;
+// }
+// for (let i = 1; i < 8; i++) {
+//     if (field.some((item) => (
+//         item.x === x && item.y === y - i && item.piece.color === color || y - i < 1
+//     ))) break;
+//     arrayMoves.push({ x: x, y: y - i })
+//     if (field.some((item) => (
+//         item.x === x && item.y === y - i && item.piece.hasOwnProperty('name')
+//     ))) break;
 // }
