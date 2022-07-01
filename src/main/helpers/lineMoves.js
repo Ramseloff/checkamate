@@ -1,4 +1,29 @@
-export function checkLinePlus(primary, primaryValue, secondary, secondaryValue, color, max, pieces) {
+export function checkLine(
+    x = 0,
+    y = 0,
+    color = '',
+    max = 8,
+    pieces = {},
+) {
+    const arrayMoves = [];
+
+    arrayMoves.push(...checkLinePlus('x', x, 'y', y, color, max, pieces));
+    arrayMoves.push(...checkLinePlus('y', y, 'x', x, color, max, pieces));
+    arrayMoves.push(...checkLineMinus('x', x, 'y', y, color, max, pieces));
+    arrayMoves.push(...checkLineMinus('y', y, 'x', x, color, max, pieces));
+
+    return arrayMoves;
+}
+
+export function checkLinePlus(
+    primary = '',
+    primaryValue = 0,
+    secondary = '',
+    secondaryValue = 0,
+    color = '',
+    max = 8,
+    pieces = {},
+) {
     const arrayMoves = [];
 
     for (let i = 1; i < max; i++) {
@@ -16,7 +41,15 @@ export function checkLinePlus(primary, primaryValue, secondary, secondaryValue, 
     return arrayMoves;
 }
 
-export function checkLineMinus(primary, primaryValue, secondary, secondaryValue, color, max, pieces) {
+export function checkLineMinus(
+    primary = '',
+    primaryValue = 0,
+    secondary = '',
+    secondaryValue = 0,
+    color = '',
+    max = 8,
+    pieces = {},
+) {
     const arrayMoves = [];
 
     for (let i = 1; i < max; i++) {

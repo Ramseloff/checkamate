@@ -12,12 +12,16 @@
     background: white;
 }
 
-.active {
-    border: 5px solid #00C800;
+.selected {
+    border: 5px solid rgba(0, 200, 0, 1);
 }
 
 .move {
-    border: 5px solid #C800C8;
+    border: 5px solid rgba(0, 250, 0, 1);
+}
+
+.attack {
+    border: 5px solid rgba(250, 0, 0, 1);
 }
 
 .piece {

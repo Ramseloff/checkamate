@@ -1,54 +1,81 @@
-import {
-    checkDiagonalLeftDown,
-    checkDiagonalLeftUp,
-    checkDiagonalRightDown,
-    checkDiagonalRightUp,
-} from './diagonalMoves';
-import { checkLineMinus, checkLinePlus } from './lineMoves';
+import { checkDiagonal } from './diagonalMoves';
+import { checkLine } from './lineMoves';
 import { pawnAttack, pawnMove } from './pawn';
 
-export const kingMoves = (x, y, color, pieces) => {
+function checkKingMove(x, y, color, arrayMoves = [], pieces = {}) {
+    const piecesWithoutKing = pieces.map((item) => {
+        return item.x === x && item.y === y ? {} : item;
+    });
+
+    const checkedMoves = arrayMoves.filter((item) => {
+        let permission = true;
+        const { x, y } = item
+        const arrayEnemyLineMoves = [];
+        const arrayEnemyDiagonalMoves = [];
+
+        arrayEnemyLineMoves.push(...checkLine(x, y, color, 8, piecesWithoutKing));
+
+        for (const i of arrayEnemyLineMoves) {
+            if (pieces.some((item) => (
+                item.x === i.x && item.y === i.y && (item.piece.type === 'rook' || item.piece.type === 'queen')
+            ))) permission = false;
+        }
+
+        arrayEnemyDiagonalMoves.push(...checkDiagonal(x, y, color, 8, piecesWithoutKing));
+
+        for (const i of arrayEnemyDiagonalMoves) {
+            if (pieces.some((item) => (
+                item.x === i.x && item.y === i.y && (item.piece.type === 'bishop' || item.piece.type === 'queen')
+            ))) permission = false;
+        }
+
+        const arrayKnightMoves = [
+            { x: x - 2, y: y - 1 }, { x: x - 2, y: y + 1 },
+            { x: x + 2, y: y - 1 }, { x: x + 2, y: y + 1 },
+            { x: x - 1, y: y - 2 }, { x: x - 1, y: y + 2 },
+            { x: x + 1, y: y - 2 }, { x: x + 1, y: y + 2 },
+        ];
+
+        // for (const i of arrayKnightMoves) {
+        //     if (pieces.some((item) => (
+        //         item.x === i.x && item.y === i.y && item.piece.type === 'knight'
+        //     ))) permission = false;
+        // }
+
+        return permission;
+    })
+
+    return checkedMoves;
+}
+
+
+export const kingMoves = (x = 0, y = 0, color = '', pieces = {}) => {
     const arrayMoves = [];
 
-    arrayMoves.push(...checkLinePlus('x', x, 'y', y, color, 2, pieces));
-    arrayMoves.push(...checkLinePlus('y', y, 'x', x, color, 2, pieces));
-    arrayMoves.push(...checkLineMinus('x', x, 'y', y, color, 2, pieces));
-    arrayMoves.push(...checkLineMinus('y', y, 'x', x, color, 2, pieces));
-    arrayMoves.push(...checkDiagonalRightUp(x, y, color, 2, pieces));
-    arrayMoves.push(...checkDiagonalRightDown(x, y, color, 2, pieces));
-    arrayMoves.push(...checkDiagonalLeftUp(x, y, color, 2, pieces));
-    arrayMoves.push(...checkDiagonalLeftDown(x, y, color, 2, pieces));
+    arrayMoves.push(...checkLine(x, y, color, 2, pieces));
+    arrayMoves.push(...checkDiagonal(x, y, color, 2, pieces));
+
+    return checkKingMove(x, y, color, arrayMoves, pieces);
+}
+
+export const queenMoves = (x = 0, y = 0, color = '', pieces = {}) => {
+    const arrayMoves = [];
+
+    arrayMoves.push(...checkLine(x, y, color, 8, pieces));
+    arrayMoves.push(...checkDiagonal(x, y, color, 8, pieces));
 
     return arrayMoves;
 }
 
-export const queenMoves = (x, y, color, pieces) => {
+export const bishopMoves = (x = 0, y = 0, color = '', pieces = {}) => {
     const arrayMoves = [];
 
-    arrayMoves.push(...checkLinePlus('x', x, 'y', y, color, 8, pieces));
-    arrayMoves.push(...checkLinePlus('y', y, 'x', x, color, 8, pieces));
-    arrayMoves.push(...checkLineMinus('x', x, 'y', y, color, 8, pieces));
-    arrayMoves.push(...checkLineMinus('y', y, 'x', x, color, 8, pieces));
-    arrayMoves.push(...checkDiagonalRightUp(x, y, color, 8, pieces));
-    arrayMoves.push(...checkDiagonalRightDown(x, y, color, 8, pieces));
-    arrayMoves.push(...checkDiagonalLeftDown(x, y, color, 8, pieces));
-    arrayMoves.push(...checkDiagonalLeftUp(x, y, color, 8, pieces));
+    arrayMoves.push(...checkDiagonal(x, y, color, 8, pieces));
 
     return arrayMoves;
 }
 
-export const bishopMoves = (x, y, color, pieces) => {
-    const arrayMoves = [];
-
-    arrayMoves.push(...checkDiagonalRightUp(x, y, color, 8, pieces));
-    arrayMoves.push(...checkDiagonalRightDown(x, y, color, 8, pieces));
-    arrayMoves.push(...checkDiagonalLeftDown(x, y, color, 8, pieces));
-    arrayMoves.push(...checkDiagonalLeftUp(x, y, color, 8, pieces));
-
-    return arrayMoves;
-}
-
-export const knightMoves = (x, y, color, pieces) => {
+export const knightMoves = (x = 0, y = 0, color = '', pieces = {}) => {
     const arrayMoves = [
         { x: x - 2, y: y - 1 }, { x: x - 2, y: y + 1 },
         { x: x + 2, y: y - 1 }, { x: x + 2, y: y + 1 },
@@ -63,19 +90,15 @@ export const knightMoves = (x, y, color, pieces) => {
     ));
 }
 
-export const rookMoves = (x, y, color, pieces) => {
+export const rookMoves = (x = 0, y = 0, color = '', pieces = {}) => {
     const arrayMoves = [];
-
-    arrayMoves.push(...checkLinePlus('x', x, 'y', y, color, 8, pieces));
-    arrayMoves.push(...checkLinePlus('y', y, 'x', x, color, 8, pieces));
-    arrayMoves.push(...checkLineMinus('x', x, 'y', y, color, 8, pieces));
-    arrayMoves.push(...checkLineMinus('y', y, 'x', x, color, 8, pieces));
+    arrayMoves.push(...checkLine(x, y, color, 8, pieces));
 
     return arrayMoves;
 }
 
 
-export const pawnMoves = (x, y, color, pieces) => {
+export const pawnMoves = (x = 0, y = 0, color = '', pieces = {}) => {
     const arrayMoves = [];
 
     arrayMoves.push(...pawnMove(x, y, color, pieces));

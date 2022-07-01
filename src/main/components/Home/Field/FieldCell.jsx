@@ -8,11 +8,11 @@ function getColor(coordinate) {
 }
 
 function checkActive(coordinate, activeCell) {
-    return (coordinate.x === activeCell.x && coordinate.y === activeCell.y) ? 'active' : ''
+    return (coordinate.x === activeCell.x && coordinate.y === activeCell.y) ? 'selected' : ''
 }
 
-function checkMove(coordinate, moveCell) {
-    return moveCell.find(i => i.x === coordinate.x && i.y === coordinate.y) ? 'move' : ''
+function checkMove(coordinate, moveCell, name) {
+    return moveCell.find(i => i.x === coordinate.x && i.y === coordinate.y) ? (name ? 'attack' : 'move') : ''
 }
 
 
@@ -26,7 +26,7 @@ const FieldCell = ({
     const classes = ['cell'];
     classes.push(getColor(coordinate));
     classes.push(checkActive(coordinate, activeCell));
-    classes.push(checkMove(coordinate, moveCell));
+    classes.push(checkMove(coordinate, moveCell, piece.name));
 
     return (
         <>

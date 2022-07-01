@@ -1,4 +1,27 @@
-export function checkDiagonalRightUp(x, y, color, max, pieces) {
+export function checkDiagonal(
+    x = 0,
+    y = 0,
+    color = '',
+    max = 8,
+    pieces = {},
+) {
+    const arrayMoves = [];
+
+    arrayMoves.push(...checkDiagonalRightUp(x, y, color, max, pieces));
+    arrayMoves.push(...checkDiagonalRightDown(x, y, color, max, pieces));
+    arrayMoves.push(...checkDiagonalLeftDown(x, y, color, max, pieces));
+    arrayMoves.push(...checkDiagonalLeftUp(x, y, color, max, pieces));
+
+    return arrayMoves;
+}
+
+export function checkDiagonalRightUp(
+    x = 0,
+    y = 0,
+    color = '',
+    max = 8,
+    pieces = {},
+) {
     const arrayMoves = [];
 
     for (let i = 1; i < max; i++) {
@@ -14,7 +37,13 @@ export function checkDiagonalRightUp(x, y, color, max, pieces) {
     return arrayMoves;
 }
 
-export function checkDiagonalRightDown(x, y, color, max, pieces) {
+export function checkDiagonalRightDown(
+    x = 0,
+    y = 0,
+    color = '',
+    max = 8,
+    pieces = {},
+) {
     const arrayMoves = [];
 
     for (let i = 1; i < max; i++) {
@@ -30,7 +59,13 @@ export function checkDiagonalRightDown(x, y, color, max, pieces) {
     return arrayMoves;
 }
 
-export function checkDiagonalLeftUp(x, y, color, max, pieces) {
+export function checkDiagonalLeftUp(
+    x = 0,
+    y = 0,
+    color = '',
+    max = 8,
+    pieces = {},
+) {
     const arrayMoves = [];
 
     for (let i = 1; i < max; i++) {
@@ -46,7 +81,13 @@ export function checkDiagonalLeftUp(x, y, color, max, pieces) {
     return arrayMoves;
 }
 
-export function checkDiagonalLeftDown(x, y, color, max, pieces) {
+export function checkDiagonalLeftDown(
+    x = 0,
+    y = 0,
+    color = '',
+    max = 8,
+    pieces = {},
+) {
     const arrayMoves = [];
 
     for (let i = 1; i < max; i++) {

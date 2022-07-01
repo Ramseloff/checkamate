@@ -1,4 +1,9 @@
-export function pawnMove(x, y, color, pieces) {
+export function pawnMove(
+    x = 0,
+    y = 0,
+    color = '',
+    pieces = {},
+) {
     const arrayMoves = [];
     const max = {
         white: x === 7 ? 3 : 2,
@@ -19,7 +24,12 @@ export function pawnMove(x, y, color, pieces) {
     return arrayMoves;
 }
 
-export function pawnAttack(x, y, color, pieces) {
+export function pawnAttack(
+    x = 0,
+    y = 0,
+    color = '',
+    pieces = {},
+) {
     const arrayMoves = [];
     const sign = {
         white: -1,

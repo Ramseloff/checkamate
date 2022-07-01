@@ -46,7 +46,7 @@ const Field = () => {
 
         if (piece.name && (!activeCell?.piece?.name || !validMove)) {
             getMoveCell(piece, x, y);
-            setActiveCell({ piece, idx });
+            setActiveCell({ piece, idx, x, y });
         } else if (validMove) {
             const newPieces = pieces;
             newPieces[activeCell.idx].piece = {};
