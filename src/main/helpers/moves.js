@@ -29,18 +29,18 @@ function checkKingMove(x, y, color, arrayMoves = [], pieces = {}) {
             ))) permission = false;
         }
 
-        const arrayKnightMoves = [
+        const arrayEnemyKnightMoves = [
             { x: x - 2, y: y - 1 }, { x: x - 2, y: y + 1 },
             { x: x + 2, y: y - 1 }, { x: x + 2, y: y + 1 },
             { x: x - 1, y: y - 2 }, { x: x - 1, y: y + 2 },
             { x: x + 1, y: y - 2 }, { x: x + 1, y: y + 2 },
         ];
 
-        // for (const i of arrayKnightMoves) {
-        //     if (pieces.some((item) => (
-        //         item.x === i.x && item.y === i.y && item.piece.type === 'knight'
-        //     ))) permission = false;
-        // }
+        for (const i of arrayEnemyKnightMoves) {
+            if (pieces.some((item) => (
+                item.x === i.x && item.y === i.y && item.piece.type === 'knight' && item.piece.color !== color
+            ))) permission = false;
+        }
 
         return permission;
     })
