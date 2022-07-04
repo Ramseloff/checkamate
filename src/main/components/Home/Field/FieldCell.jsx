@@ -35,6 +35,7 @@ const FieldCell = ({
                     coordinate={coordinate}
                     piece={piece}
                 />
+                {coordinate.x}{coordinate.y}
             </div>
         </>
     );

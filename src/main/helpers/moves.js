@@ -1,6 +1,7 @@
 import { checkDiagonal } from './diagonalMoves';
 import { checkLine } from './lineMoves';
 import { pawnAttack, pawnMove } from './pawn';
+import { knightMove } from './knight';
 
 function checkKingMove(
     x = 0,
@@ -10,7 +11,7 @@ function checkKingMove(
     pieces = {}
 ) {
     const piecesWithoutKing = pieces.map((item) => {
-        return item.x === x && item.y === y ? {} : item;
+        return item.x === x && item.y === y ? { ...item, ['piece']: {} } : item;
     });
 
     return arrayMoves.filter((item) => {
@@ -18,6 +19,7 @@ function checkKingMove(
         const { x, y } = item
         const arrayEnemyLineMoves = [];
         const arrayEnemyDiagonalMoves = [];
+        const arrayEnemyKnightMoves = [];
 
         arrayEnemyLineMoves.push(...checkLine(x, y, color, 8, piecesWithoutKing));
 
@@ -35,12 +37,7 @@ function checkKingMove(
             ))) permission = false;
         }
 
-        const arrayEnemyKnightMoves = [
-            { x: x - 2, y: y - 1 }, { x: x - 2, y: y + 1 },
-            { x: x + 2, y: y - 1 }, { x: x + 2, y: y + 1 },
-            { x: x - 1, y: y - 2 }, { x: x - 1, y: y + 2 },
-            { x: x + 1, y: y - 2 }, { x: x + 1, y: y + 2 },
-        ];
+        arrayEnemyKnightMoves.push(...knightMove(x, y, color, pieces));
 
         for (const i of arrayEnemyKnightMoves) {
             if (pieces.some((item) => (
@@ -50,6 +47,40 @@ function checkKingMove(
 
         return permission;
     });
+}
+
+function checkPieceMove(
+    x = 0,
+    y = 0,
+    color = '',
+    arrayMoves = [],
+    pieces = {}
+) {
+    const king = pieces.find((item) => item.piece.color === color && item.piece.type === 'king');
+    const piecesWithoutPiece = pieces.map((item) => {
+        return item.x === x && item.y === y ? { ...item, ['piece']: {} } : item;
+    });
+
+
+    const checkedMoves = arrayMoves.filter((item) => {
+        let permission = true;
+        const { x, y } = item
+        const arrayEnemyLineMoves = [];
+
+        arrayEnemyLineMoves.push(...checkLine(x, y, color, 8, piecesWithoutPiece));
+
+        for (const i of arrayEnemyLineMoves) {
+            if (pieces.some((item) => (
+                item.x === i.x && item.y === i.y && (item.piece.type === 'rook' || item.piece.type === 'queen')
+            ))) permission = false;
+        }
+
+        return permission;
+    });
+
+    console.log(arrayMoves, checkedMoves, '<>');
+
+    return checkedMoves;
 }
 
 
@@ -68,6 +99,8 @@ export const queenMoves = (x = 0, y = 0, color = '', pieces = {}) => {
     arrayMoves.push(...checkLine(x, y, color, 8, pieces));
     arrayMoves.push(...checkDiagonal(x, y, color, 8, pieces));
 
+    checkPieceMove(x, y, color, arrayMoves, pieces);
+
     return arrayMoves;
 }
 
@@ -80,22 +113,16 @@ export const bishopMoves = (x = 0, y = 0, color = '', pieces = {}) => {
 }
 
 export const knightMoves = (x = 0, y = 0, color = '', pieces = {}) => {
-    const arrayMoves = [
-        { x: x - 2, y: y - 1 }, { x: x - 2, y: y + 1 },
-        { x: x + 2, y: y - 1 }, { x: x + 2, y: y + 1 },
-        { x: x - 1, y: y - 2 }, { x: x - 1, y: y + 2 },
-        { x: x + 1, y: y - 2 }, { x: x + 1, y: y + 2 },
-    ];
+    const arrayMoves = [];
 
-    return arrayMoves.filter((i) => pieces.some(
-        (item) => (item.x === i.x && item.y === i.y && (
-            !item.piece.hasOwnProperty('name') || color !== item.piece.color
-        )),
-    ));
+    arrayMoves.push(...knightMove(x, y, color, pieces));
+
+    return arrayMoves;
 }
 
 export const rookMoves = (x = 0, y = 0, color = '', pieces = {}) => {
     const arrayMoves = [];
+
     arrayMoves.push(...checkLine(x, y, color, 8, pieces));
 
     return arrayMoves;
