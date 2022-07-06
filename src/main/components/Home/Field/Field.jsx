@@ -17,6 +17,11 @@ const Field = () => {
     const [pieces, setPieces] = useState(field);
     const [activeCell, setActiveCell] = useState({})
     const [moveCell, setMoveCell] = useState([]);
+    const [round, setRound] = useState('white');
+    const roundSettings = {
+        white: 'black',
+        black: 'white',
+    }
 
 
     const moveRules = {
@@ -40,11 +45,15 @@ const Field = () => {
         setMoveCell([]);
     }
 
+    function onChangeRound() {
+        setRound(roundSettings[round]);
+    }
+
     function onCheckCell(idx) {
         const { x, y, piece } = pieces[idx];
         const validMove = moveCell.some((i) => (i.x === x && i.y === y));
 
-        if (piece.name && (!activeCell?.piece?.name || !validMove)) {
+        if (piece.name && (!activeCell?.piece?.name || !validMove) && piece.color === round) {
             getMoveCell(piece, x, y);
             setActiveCell({ piece, idx, x, y });
         } else if (validMove) {
@@ -52,6 +61,9 @@ const Field = () => {
             newPieces[activeCell.idx].piece = {};
             newPieces[idx].piece = activeCell.piece;
             setPieces(newPieces);
+            onClear();
+            onChangeRound();
+        } else {
             onClear();
         }
     }
