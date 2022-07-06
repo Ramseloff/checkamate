@@ -3,6 +3,49 @@ import { checkLine } from './lineMoves';
 import { pawnAttack, pawnMove } from './pawn';
 import { knightMove } from './knight';
 
+function checkEnemyPieceMove(x, y, color, pieces) {
+    let permission = true;
+    const arrayEnemyLineMoves = [];
+    const arrayEnemyDiagonalMoves = [];
+    const arrayEnemyKnightMoves = [];
+    const arrayEnemyPawnMoves = [];
+
+    arrayEnemyLineMoves.push(...checkLine(x, y, color, 8, pieces));
+
+    for (const i of arrayEnemyLineMoves) {
+        if (pieces.some((item) => (
+            item.x === i.x && item.y === i.y && (item.piece.type === 'rook' || item.piece.type === 'queen')
+        ))) permission = false;
+    }
+
+    arrayEnemyDiagonalMoves.push(...checkDiagonal(x, y, color, 8, pieces));
+
+    for (const i of arrayEnemyDiagonalMoves) {
+        if (pieces.some((item) => (
+            item.x === i.x && item.y === i.y && (item.piece.type === 'bishop' || item.piece.type === 'queen')
+        ))) permission = false;
+    }
+
+    arrayEnemyKnightMoves.push(...knightMove(x, y, color, pieces));
+
+    for (const i of arrayEnemyKnightMoves) {
+        if (pieces.some((item) => (
+            item.x === i.x && item.y === i.y && item.piece.type === 'knight' && item.piece.color !== color
+        ))) permission = false;
+    }
+
+    arrayEnemyPawnMoves.push(...pawnAttack(x, y, color, pieces));
+
+    for (const i of arrayEnemyPawnMoves) {
+        if (pieces.some((item) => (
+            item.x === i.x && item.y === i.y && item.piece.type === 'pawn' && item.piece.color !== color
+        ))) permission = false;
+    }
+
+    return permission;
+
+}
+
 function checkKingMove(
     x = 0,
     y = 0,
@@ -15,46 +58,9 @@ function checkKingMove(
     });
 
     return arrayMoves.filter((item) => {
-        let permission = true;
         const { x, y } = item
-        const arrayEnemyLineMoves = [];
-        const arrayEnemyDiagonalMoves = [];
-        const arrayEnemyKnightMoves = [];
-        const arrayEnemyPawnMoves = [];
 
-        arrayEnemyLineMoves.push(...checkLine(x, y, color, 8, piecesWithoutKing));
-
-        for (const i of arrayEnemyLineMoves) {
-            if (pieces.some((item) => (
-                item.x === i.x && item.y === i.y && (item.piece.type === 'rook' || item.piece.type === 'queen')
-            ))) permission = false;
-        }
-
-        arrayEnemyDiagonalMoves.push(...checkDiagonal(x, y, color, 8, piecesWithoutKing));
-
-        for (const i of arrayEnemyDiagonalMoves) {
-            if (pieces.some((item) => (
-                item.x === i.x && item.y === i.y && (item.piece.type === 'bishop' || item.piece.type === 'queen')
-            ))) permission = false;
-        }
-
-        arrayEnemyKnightMoves.push(...knightMove(x, y, color, pieces));
-
-        for (const i of arrayEnemyKnightMoves) {
-            if (pieces.some((item) => (
-                item.x === i.x && item.y === i.y && item.piece.type === 'knight' && item.piece.color !== color
-            ))) permission = false;
-        }
-
-        arrayEnemyPawnMoves.push(...pawnAttack(x, y, color, pieces));
-
-        for (const i of arrayEnemyPawnMoves) {
-            if (pieces.some((item) => (
-                item.x === i.x && item.y === i.y && item.piece.type === 'pawn' && item.piece.color !== color
-            ))) permission = false;
-        }
-
-        return permission;
+        return checkEnemyPieceMove(x, y, color, piecesWithoutKing);
     });
 }
 
@@ -72,50 +78,13 @@ function checkPieceMove(
     });
 
     return arrayMoves.filter((item) => {
-        let permission = true;
         const { x, y } = item
-        const arrayEnemyLineMoves = [];
-        const arrayEnemyDiagonalMoves = [];
-        const arrayEnemyKnightMoves = [];
-        const arrayEnemyPawnMoves = [];
 
         const piecesWithNewPiece = piecesWithoutPiece.map((item) => {
             return item.x === x && item.y === y ? { ...item, ['piece']: piece } : item;
         });
 
-        arrayEnemyLineMoves.push(...checkLine(king.x, king.y, color, 8, piecesWithNewPiece));
-
-        for (const i of arrayEnemyLineMoves) {
-            if (piecesWithNewPiece.some((item) => (
-                item.x === i.x && item.y === i.y && (item.piece.type === 'rook' || item.piece.type === 'queen')
-            ))) permission = false;
-        }
-
-        arrayEnemyDiagonalMoves.push(...checkDiagonal(king.x, king.y, color, 8, piecesWithNewPiece));
-
-        for (const i of arrayEnemyDiagonalMoves) {
-            if (piecesWithNewPiece.some((item) => (
-                item.x === i.x && item.y === i.y && (item.piece.type === 'bishop' || item.piece.type === 'queen')
-            ))) permission = false;
-        }
-
-        arrayEnemyKnightMoves.push(...knightMove(king.x, king.y, color, piecesWithNewPiece));
-
-        for (const i of arrayEnemyKnightMoves) {
-            if (piecesWithNewPiece.some((item) => (
-                item.x === i.x && item.y === i.y && item.piece.type === 'knight' && item.piece.color !== color
-            ))) permission = false;
-        }
-
-        arrayEnemyPawnMoves.push(...pawnAttack(king.x, king.y, color, piecesWithNewPiece));
-
-        for (const i of arrayEnemyPawnMoves) {
-            if (piecesWithNewPiece.some((item) => (
-                item.x === i.x && item.y === i.y && item.piece.type === 'pawn' && item.piece.color !== color
-            ))) permission = false;
-        }
-
-        return permission;
+        return checkEnemyPieceMove(king.x, king.y, color, piecesWithNewPiece);
     });
 }
 
