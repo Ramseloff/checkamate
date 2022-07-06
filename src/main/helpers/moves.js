@@ -77,6 +77,7 @@ function checkPieceMove(
         const arrayEnemyLineMoves = [];
         const arrayEnemyDiagonalMoves = [];
         const arrayEnemyKnightMoves = [];
+        const arrayEnemyPawnMoves = [];
 
         const piecesWithNewPiece = piecesWithoutPiece.map((item) => {
             return item.x === x && item.y === y ? { ...item, ['piece']: piece } : item;
@@ -98,11 +99,19 @@ function checkPieceMove(
             ))) permission = false;
         }
 
-        arrayEnemyKnightMoves.push(...knightMove(king.x, king.y, color, pieces));
+        arrayEnemyKnightMoves.push(...knightMove(king.x, king.y, color, piecesWithNewPiece));
 
         for (const i of arrayEnemyKnightMoves) {
             if (piecesWithNewPiece.some((item) => (
                 item.x === i.x && item.y === i.y && item.piece.type === 'knight' && item.piece.color !== color
+            ))) permission = false;
+        }
+
+        arrayEnemyPawnMoves.push(...pawnAttack(king.x, king.y, color, piecesWithNewPiece));
+
+        for (const i of arrayEnemyPawnMoves) {
+            if (piecesWithNewPiece.some((item) => (
+                item.x === i.x && item.y === i.y && item.piece.type === 'pawn' && item.piece.color !== color
             ))) permission = false;
         }
 
