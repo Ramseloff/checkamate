@@ -2,6 +2,7 @@ import { checkDiagonal } from './diagonalMoves';
 import { checkLine } from './lineMoves';
 import { pawnAttack, pawnMove } from './pawn';
 import { knightMove } from './knight';
+import { arrayCastlingAttackCells, arrayCastlingCheckCells, arrayCastlingMoves } from '../config/config';
 
 function checkEnemyPieceMove(x, y, color, pieces) {
     let permission = true;
@@ -43,7 +44,6 @@ function checkEnemyPieceMove(x, y, color, pieces) {
     }
 
     return permission;
-
 }
 
 function checkKingMove(
@@ -88,12 +88,68 @@ function checkPieceMove(
     });
 }
 
+function checkCastlingCells(castlingPermission, checkCells, attackCells, color, arrayMoves, pieces) {
+    const permissionAttack = arrayMoves.some((i) => (i.x === attackCells.x && i.y === attackCells.y))
+
+    let permissionMove = true;
+    checkCells.map((i) => {
+        if (pieces.some((item) => (
+            item.x === i.x && item.y === i.y && item.piece.name
+        ))) permissionMove = false;
+    })
+
+    return permissionMove && permissionAttack && castlingPermission;
+}
+
+function castlingMoves(
+    x = 0,
+    y = 0,
+    color = '',
+    arrayCheckedMoves = [],
+    pieces = {},
+) {
+    const arrayMoves = [];
+    const king = pieces.find((item) => item.piece.color === color && item.piece.type === 'king');
+
+    // Проверка разрешения рокировки направо
+    let castlingPermissionRight = checkCastlingCells(
+        king.piece.castling.right,
+        arrayCastlingCheckCells(x, y).right,
+        arrayCastlingAttackCells(x, y).right,
+        color,
+        arrayCheckedMoves,
+        pieces,
+    );
+
+    // Проверка разрешения рокировки налево
+    let castlingPermissionLeft = checkCastlingCells(
+        king.piece.castling.left,
+        arrayCastlingCheckCells(x, y).left,
+        arrayCastlingAttackCells(x, y).left,
+        color,
+        arrayCheckedMoves,
+        pieces,
+    );
+
+    //Разрешение рокировки если нет шах королю
+    const checkPermission = (checkEnemyPieceMove(x, y, color, pieces));
+
+    // Если есть разрешения добавить королю поля для движения
+    if (castlingPermissionRight && checkPermission) arrayMoves.push(arrayCastlingMoves(x, y).right);
+    if (castlingPermissionLeft&& checkPermission) arrayMoves.push(arrayCastlingMoves(x, y).left);
+
+    return arrayMoves;
+}
+
 
 export const kingMoves = (x = 0, y = 0, color = '', pieces = {}) => {
     const arrayMoves = [];
 
     arrayMoves.push(...checkLine(x, y, color, 2, pieces));
     arrayMoves.push(...checkDiagonal(x, y, color, 2, pieces));
+
+    const arrayCheckedMoves = checkKingMove(x, y, color, arrayMoves, pieces)
+    arrayMoves.push(...castlingMoves(x, y, color, arrayCheckedMoves, pieces));
 
     return checkKingMove(x, y, color, arrayMoves, pieces);
 }
