@@ -5,11 +5,11 @@
 }
 
 .black {
-    background: blue;
+    background: rgba(209, 139, 71, 1);
 }
 
 .white {
-    background: white;
+    background: rgba(255, 206, 158, 1);
 }
 
 .selected {
