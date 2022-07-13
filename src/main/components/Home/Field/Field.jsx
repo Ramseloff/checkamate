@@ -18,21 +18,10 @@ const Field = () => {
     const [activeCell, setActiveCell] = useState({})
     const [moveCell, setMoveCell] = useState([]);
     const [round, setRound] = useState('white');
-    const [castling, setCastling] = useState({
-        white: {
-            left: true,
-            right: true,
-        },
-        black: {
-            left: true,
-            right: true,
-        },
-    })
     const roundSettings = {
         white: 'black',
         black: 'white',
     }
-
 
     const moveRules = {
         pawn: pawnMoves,
@@ -69,25 +58,30 @@ const Field = () => {
             setActiveCell({ piece, idx, x, y });
         } else if (validMove) {
             const newPieces = pieces;
-            const oldPiece = pieces[activeCell.idx];
-
+            // Затереть старое поле фигуры
             newPieces[activeCell.idx].piece = {};
+            // Поместить в новое поле активную фигуру
             newPieces[idx].piece = activeCell.piece;
 
             const piece = newPieces[idx].piece;
             const kingIdx = newPieces.findIndex(
                 (item) => item.piece.type === 'king' && item.piece.color === piece.color);
-            const rookKIdx = newPieces.findIndex(
-                (item) => item.piece.name === piece.color + 'RookK' && item.piece.color === piece.color);
-            const rookQIdx = newPieces.findIndex(
-                (item) => item.piece.name === piece.color + 'RookQ' && item.piece.color === piece.color);
 
-
-            if (piece.type === 'king') {
+            // Если фигура король и есть разрешение рокировки
+            if (piece.type === 'king' && (piece.castling.right ||  piece.castling.left)) {
+                const oldPiece = pieces[activeCell.idx];
                 const oldPieceCastling = arrayCastlingMoves(oldPiece.x, oldPiece.y);
+
+                // Найти idx ладей
+                const rookKIdx = newPieces.findIndex(
+                    (item) => item.piece.name === piece.color + 'RookK' && item.piece.color === piece.color);
+                const rookQIdx = newPieces.findIndex(
+                    (item) => item.piece.name === piece.color + 'RookQ' && item.piece.color === piece.color);
+
                 piece.castling.right = false;
                 piece.castling.left = false;
 
+                // Если король переместился на поле рокировки, то переместить ладью на новое поле, а старую затереть
                 if (oldPieceCastling.right.x === x && oldPieceCastling.right.y === y)  {
                     newPieces[rookKIdx - 2].piece = newPieces[rookKIdx].piece;
                     newPieces[rookKIdx].piece = {};
@@ -98,9 +92,10 @@ const Field = () => {
                 }
             }
 
+            // Если переместилась ладья, то убрать соответствующее разрешение рокировки
             if (piece.type === 'rook') {
-                if (piece.name === 'whiteRookK') newPieces[kingIdx].piece.castling.right = false;
-                if (piece.name === 'whiteRookQ') newPieces[kingIdx].piece.castling.left = false;
+                if (piece.name === 'whiteRookK' || piece.name === 'blackRookK') newPieces[kingIdx].piece.castling.right = false;
+                if (piece.name === 'whiteRookQ' || piece.name === 'blackRookQ') newPieces[kingIdx].piece.castling.left = false;
             }
 
             setPieces(newPieces);
@@ -111,7 +106,6 @@ const Field = () => {
         }
     }
 
-    // console.log(moveCell, activeCell);
     return (
         <>
             <div>

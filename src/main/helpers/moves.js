@@ -90,8 +90,8 @@ function checkPieceMove(
 
 function checkCastlingCells(castlingPermission, checkCells, attackCells, color, arrayMoves, pieces) {
     const permissionAttack = arrayMoves.some((i) => (i.x === attackCells.x && i.y === attackCells.y))
-
     let permissionMove = true;
+
     checkCells.map((i) => {
         if (pieces.some((item) => (
             item.x === i.x && item.y === i.y && item.piece.name
@@ -131,7 +131,7 @@ function castlingMoves(
         pieces,
     );
 
-    //Разрешение рокировки если нет шах королю
+    //Разрешение рокировки если нет шаха королю
     const checkPermission = (checkEnemyPieceMove(x, y, color, pieces));
 
     // Если есть разрешения добавить королю поля для движения
